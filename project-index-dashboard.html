@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<style>
+  :root{--card:#1c1c1e;--line:rgba(255,255,255,.09);--ok:#34d399;--warn:#fbbf24;--bad:#f87171;--info:#60a5fa;--mut:var(--muted-foreground);--fg:var(--foreground);}
+  *{box-sizing:border-box}body{font:13px/1.45 -apple-system,'Segoe UI',Roboto,sans-serif;color:var(--fg);background:transparent;padding:2px;margin:0}
+  h1{font-size:16px;margin:0 0 2px}.sub{color:var(--mut);margin-bottom:12px;font-size:11px}
+  .toolbar{display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap}
+  button{background:var(--card);border:1px solid var(--line);color:var(--fg);padding:4px 10px;border-radius:6px;font-size:11px;cursor:pointer}button:hover{border-color:var(--info)}
+  button.active{background:var(--info);color:#000;border-color:var(--info)}
+  table{width:100%;border-collapse:collapse;font-size:12px}
+  th,td{padding:6px 8px;text-align:left;border-bottom:1px solid var(--line);white-space:nowrap}
+  th{color:var(--mut);font-weight:600;font-size:11px;position:sticky;top:0;background:rgba(28,28,30,.95)}
+  tr:hover td{background:rgba(255,255,255,.02)}
+  .status{display:inline-block;padding:1px 7px;border-radius:20px;font-size:10px;font-weight:600}
+  .s-done{background:rgba(52,211,153,.15);color:var(--ok)}.s-active{background:rgba(96,165,250,.15);color:var(--info)}
+  .s-blocked{background:rgba(248,113,113,.15);color:var(--bad)}.s-planned{background:rgba(251,191,36,.15);color:var(--warn)}
+  .s-archived{background:rgba(148,163,184,.15);color:#94a3b8}
+  .tag{display:inline-block;padding:1px 6px;border-radius:4px;font-size:9px;margin:0 2px 0 0;background:rgba(96,165,250,.1);color:var(--info)}
+  @media (max-width:800px){table{display:block;overflow-x:auto}}
+</style>
+</head>
+<body>
+  <h1>📋 Project Index — Team 007</h1>
+  <div class="sub">Source: vault mirror ~/fleet/vault-mirror · synced 2026-09-28 · <span id="count">0</span> projects</div>
+  <div class="toolbar">
+    <button class="active" data-filter="all">All</button>
+    <button data-filter="active">Active</button>
+    <button data-filter="done">Done</button>
+    <button data-filter="blocked">Blocked</button>
+    <button data-filter="planned">Planned</button>
+    <button data-filter="archived">Archived</button>
+  </div>
+  <table id="tbl"><thead><tr>
+    <th>Project</th><th>Status</th><th>Area</th><th>Owner</th><th>Next Action</th><th>Updated</th><th>Tags</th>
+  </tr></thead><tbody></tbody></table>
+<script>
+const ROWS = [
+  {"project":"Fleet Command Dashboard","status":"done","area":"infra","owner":"Alpha","next":"Deploy to GitHub Pages","updated":"2026-09-29","tags":["dashboard","fleet"]},
+  {"project":"Legal Taxonomy Consolidation","status":"active","area":"legal","owner":"Alpha","next":"Execute dry-run on mirror","updated":"2026-09-29","tags":["consolidation","gould-v-shugal"]},
+  {"project":"Vault Gateway Restore","status":"blocked","area":"infra","owner":"Delta","next":"Physical console check on minis","updated":"2026-09-29","tags":["gateway","tailscale"]},
+  {"project":"Phase 1 Ingestion Finish","status":"planned","area":"knowledge","owner":"Charlie","next":"Ubuntu md (6,584) + agent instr (89)","updated":"2026-09-28","tags":["ingestion","ubuntu"]},
+  {"project":"OVERWATCH DSH Fix","status":"active","area":"infra","owner":"Jeff","next":"Greg apply switch","updated":"2026-09-28","tags":["overwatch","dsh"]},
+  {"project":"Etsy Batch 5 Launch","status":"active","area":"revenue","owner":"Bravo","next":"Physical photo checklist","updated":"2026-08-21","tags":["etsy","studio535"]},
+  {"project":"Laser Coaster SVGs","status":"blocked","area":"maker","owner":"Foxtrot","next":"Design approval","updated":"2026-09-07","tags":["laser","etsy"]},
+  {"project":"Qwen3.8-27B llama.cpp","status":"done","area":"ml","owner":"Echo","next":"Benchmark vs gemma4","updated":"2026-09-07","tags":["gpu","3090ti"]},
+  {"project":"RAG API :5001","status":"blocked","area":"ml","owner":"Echo","next":"Restart service on greg-ai-server","updated":"2026-09-07","tags":["rag","down"]},
+  {"project":"Google Calendar Auth","status":"planned","area":"infra","owner":"Delta","next":"gws setup","updated":"2026-09-07","tags":["calendar","auth"]},
+  {"project":"Apple Notes → Obsidian","status":"done","area":"knowledge","owner":"Charlie","next":"Verify 239 notes / 591 images","updated":"2026-08-03","tags":["ingestion","done"]},
+  {"project":"Fleet Architecture Doc","status":"planned","area":"infra","owner":"Delta","next":"Write ARCHITECTURE.md","updated":"2026-08-25","tags":["docs","fleet"]},
+  {"project":"FootGift Blog + Images","status":"active","area":"revenue","owner":"Bravo","next":"Cron subprocess fix (no_agent)","updated":"2026-09-02","tags":["footgift","cron"]},
+  {"project":"Cold Outreach Pipeline","status":"active","area":"revenue","owner":"Bravo","next":"129 leads scored, send","updated":"2026-09-02","tags":["outreach","studio535"]},
+  {"project":"Masonic Research","status":"planned","area":"creative","owner":"Foxtrot","next":"Ritual design docs","updated":"2026-09-02","tags":["masonic"]},
+  {"project":"Dreamforge Day 14","status":"archived","area":"creative","owner":"Foxtrot","next":"Drift guard — disabled","updated":"2026-09-02","tags":["dreamforge","archived"]},
+];
+const tb=document.querySelector('#tbl tbody'),count=document.getElementById('count');
+const statusClass={'done':'s-done','active':'s-active','blocked':'s-blocked','planned':'s-planned','archived':'s-archived'};
+function render(filter){
+  tb.innerHTML='';
+  ROWS.filter(r=>filter==='all'||r.status===filter).forEach(r=>{
+    const tr=document.createElement('tr');
+    tr.innerHTML=`<td><strong>${r.project}</strong></td><td><span class="status ${statusClass[r.status]}">${r.status}</span></td><td>${r.area}</td><td>${r.owner}</td><td>${r.next}</td><td>${r.updated}</td><td>${r.tags.map(t=>`<span class="tag">${t}</span>`).join('')}</td>`;
+    tb.appendChild(tr);
+  });
+  count.textContent=ROWS.filter(r=>filter==='all'||r.status===filter).length;
+}
+document.querySelectorAll('.toolbar button').forEach(b=>b.addEventListener('click',e=>{
+  document.querySelectorAll('.toolbar button').forEach(x=>x.classList.remove('active'));
+  e.target.classList.add('active');
+  render(e.target.dataset.filter);
+}));
+render('all');
+</script>
+</body>
+</html>

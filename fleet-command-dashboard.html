@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<style>
+  :root{
+    --card:#1c1c1e; --line:rgba(255,255,255,.09);
+    --ok:#34d399; --warn:#fbbf24; --bad:#f87171; --info:#60a5fa;
+    --mut:var(--muted-foreground); --fg:var(--foreground);
+  }
+  *{box-sizing:border-box}
+  body{font:13px/1.45 -apple-system,'Segoe UI',Roboto,sans-serif;color:var(--fg);background:transparent;padding:2px}
+  h1{font-size:16px;margin:0 0 2px} .sub{color:var(--mut);margin-bottom:12px;font-size:11px}
+  .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:10px}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:12px}
+  .card h2{font-size:12px;text-transform:uppercase;letter-spacing:.06em;color:var(--mut);margin:0 0 8px}
+  .kpi{display:flex;justify-content:space-between;padding:3px 0;border-bottom:1px dashed var(--line)}
+  .kpi:last-child{border-bottom:none}
+  .val{font-weight:600} .ok{color:var(--ok)} .warn{color:var(--warn)} .bad{color:var(--bad)} .info{color:var(--info)}
+  .tag{display:inline-block;padding:1px 7px;border-radius:20px;font-size:10px;font-weight:600;margin:2px 2px 0 0}
+  .t-ok{background:rgba(52,211,153,.15);color:var(--ok)} .t-warn{background:rgba(251,191,36,.15);color:var(--warn)} .t-bad{background:rgba(248,113,113,.15);color:var(--bad)}
+</style>
+</head>
+<body>
+  <h1>⚡ Fleet Command — Team 007</h1>
+  <div class="sub">Vault: external disk live-verified 2026-08-25 · 511.9 GB APFS · ~4.4k notes</div>
+
+  <div class="grid">
+    <div class="card">
+      <h2>🧠 Second Brain</h2>
+      <div class="kpi"><span>Total files</span><span class="val info">~73,350</span></div>
+      <div class="kpi"><span>Markdown notes</span><span class="val info">4,444</span></div>
+      <div class="kpi"><span>📥 INBOX backlog</span><span class="val warn">630 files</span></div>
+      <div class="kpi"><span>KNOWLEDGE curated</span><span class="val ok">48.3k files</span></div>
+      <div class="kpi"><span>SOURCES by machine</span><span class="val">19.4k files</span></div>
+    </div>
+
+    <div class="card">
+      <h2>🫀 Fleet Health</h2>
+      <div class="kpi"><span>Gateway mac-mini (vault)</span><span class="val bad">OFFLINE</span></div>
+      <div class="kpi"><span>greg-ai-server (this)</span><span class="val ok">ONLINE</span></div>
+      <div class="kpi"><span>16GB mini</span><span class="val bad">unreachable</span></div>
+      <div class="kpi"><span>Last vault health</span><span class="val ok">2026-08-25</span></div>
+    </div>
+
+    <div class="card">
+      <h2>👤 SEAL Team</h2>
+      <div class="kpi"><span>Commander</span><span class="val">Alpha</span></div>
+      <div class="kpi"><span>Specialists</span><span class="val">Bravo…Foxtrot</span></div>
+      <div class="kpi"><span>Active missions</span><span class="val info">tasks/ folder</span></div>
+      <div class="kpi"><span>Reports</span><span class="val">reports/ folder</span></div>
+    </div>
+
+    <div class="card">
+      <h2>⚖️ Legal (Gould v. Shugal)</h2>
+      <div class="kpi"><span>Taxonomy</span><span class="val warn">2 parallel</span></div>
+      <div class="kpi"><span>Dedup flagged</span><span class="val warn">duplicates-q</span></div>
+      <div class="kpi"><span>Numerated packs</span><span class="val info">01–09</span></div>
+      <span class="tag t-warn">needs consolidation</span>
+    </div>
+
+    <div class="card">
+      <h2>💰 Revenue (studio-535)</h2>
+      <div class="kpi"><span>Etsy batches</span><span class="val">4 &amp; 5</span></div>
+      <div class="kpi"><span>Demand reports</span><span class="val">2026-08-07</span></div>
+      <div class="kpi"><span>Prompt library</span><span class="val info">incl. client-getter</span></div>
+      <span class="tag t-ok">stream 1 active</span>
+    </div>
+
+    <div class="card">
+      <h2>📦 Ingestion (Phase 1)</h2>
+      <div class="kpi"><span>Apple Notes</span><span class="val ok">✓ DONE</span></div>
+      <div class="kpi"><span>Ubuntu md (6,584)</span><span class="val warn">pending</span></div>
+      <div class="kpi"><span>Agent instr (89)</span><span class="val warn">pending</span></div>
+      <div class="kpi"><span>GDrive legal</span><span class="val warn">pending</span></div>
+      <div class="kpi"><span>iPhone backup</span><span class="val warn">pending</span></div>
+    </div>
+  </div>
+</body>
+</html>

@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<style>
+  :root{--card:#1c1c1e;--line:rgba(255,255,255,.09);--ok:#34d399;--warn:#fbbf24;--bad:#f87171;--info:#60a5fa;--mut:var(--muted-foreground);--fg:var(--foreground);}
+  *{box-sizing:border-box}body{font:13px/1.45 -apple-system,'Segoe UI',Roboto,sans-serif;color:var(--fg);background:transparent;padding:16px;margin:0}
+  h1{font-size:20px;margin:0 0 4px}.sub{color:var(--mut);margin-bottom:24px;font-size:13px}
+  .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:20px;text-decoration:none;color:inherit;transition:border-color .15s,transform .1s}
+  .card:hover{border-color:var(--info);transform:translateY(-2px)}
+  .card h2{font-size:15px;margin:0 0 8px}
+  .card p{color:var(--mut);font-size:12px;margin:0 0 12px}
+  .card .meta{display:flex;gap:8px;flex-wrap:wrap;font-size:10px}
+  .badge{padding:2px 8px;border-radius:20px;background:rgba(96,165,250,.1);color:var(--info)}
+  .badge.warn{background:rgba(251,191,36,.1);color:var(--warn)}
+  .badge.bad{background:rgba(248,113,113,.1);color:var(--bad)}
+  .badge.ok{background:rgba(52,211,153,.1);color:var(--ok)}
+</style>
+</head>
+<body>
+  <h1>🎛️ Team 007 — Dashboard Hub</h1>
+  <div class="sub">Live fleet intelligence · Built from vault mirror (synced 4h ago) · Deployable to GitHub Pages</div>
+  <div class="grid">
+    <a class="card" href="fleet-command-dashboard.html">
+      <h2>⚡ Fleet Command</h2>
+      <p>Brain stats, fleet health, SEAL team, legal, revenue, ingestion — single-pane overview</p>
+      <div class="meta"><span class="badge ok">LIVE</span><span class="badge">primary</span></div>
+    </a>
+    <a class="card" href="project-index-dashboard.html">
+      <h2>📋 Project Index</h2>
+      <p>All 17 active/planned/blocked projects with status, owner, next action, tags — filterable</p>
+      <div class="meta"><span class="badge ok">LIVE</span><span class="badge">filterable</span></div>
+    </a>
+    <a class="card" href="fleet-topology-dashboard.html">
+      <h2>🌐 Fleet Topology</h2>
+      <p>6 compute nodes, GPU allocation, services, storage, Tailscale mesh, agent deployment</p>
+      <div class="meta"><span class="badge ok">LIVE</span><span class="badge warn">2 nodes offline</span></div>
+    </a>
+    <a class="card" href="legal-timeline-dashboard.html">
+      <h2>⚖️ Legal Timeline</h2>
+      <p>Gould v. Shugal (BR23D0629DR) — 38 events, filterable by type (filing/order/motion/hearing/discovery)</p>
+      <div class="meta"><span class="badge ok">LIVE</span><span class="badge">chronological</span></div>
+    </a>
+    <a class="card" href="vault-health-dashboard.html">
+      <h2>📊 Vault Health</h2>
+      <p>Snapshot history, section breakdown, health checks, Phase 1 ingestion status, alerts</p>
+      <div class="meta"><span class="badge ok">LIVE</span><span class="badge warn">canonical down</span></div>
+    </a>
+    <a class="card" href="legal-consolidation-plan.md">
+      <h2>📄 Legal Consolidation Plan</h2>
+      <p>Phase 1-4 execution plan to collapse dual taxonomy → 1-2 packages per matter</p>
+      <div class="meta"><span class="badge">PLAN</span><span class="badge warn">awaiting go</span></div>
+    </a>
+  </div>
+</body>
+</html>

@@ -1,0 +1,121 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<style>
+  :root{--card:#1c1c1e;--line:rgba(255,255,255,.09);--ok:#34d399;--warn:#fbbf24;--bad:#f87171;--info:#60a5fa;--mut:var(--muted-foreground);--fg:var(--foreground);}
+  *{box-sizing:border-box}body{font:13px/1.45 -apple-system,'Segoe UI',Roboto,sans-serif;color:var(--fg);background:transparent;padding:2px;margin:0}
+  h1{font-size:16px;margin:0 0 2px}.sub{color:var(--mut);margin-bottom:12px;font-size:11px}
+  .timeline{position:relative;padding-left:20px}
+  .timeline::before{content:'';position:absolute;left:7px;top:0;bottom:0;width:2px;background:var(--line)}
+  .event{position:relative;padding-left:24px;margin-bottom:16px}
+  .event::before{content:'';position:absolute;left:-4px;top:4px;width:14px;height:14px;border-radius:50%;background:var(--card);border:2px solid var(--line);z-index:1}
+  .event.filing::before{border-color:#60a5fa;background:rgba(96,165,250,.15)}
+  .event.order::before{border-color:#34d399;background:rgba(52,211,153,.15)}
+  .event.motion::before{border-color:#fbbf24;background:rgba(251,191,36,.15)}
+  .event.hearing::before{border-color:#f87171;background:rgba(248,113,113,.15)}
+  .event.discovery::before{border-color:#a855f7;background:rgba(168,85,247,.15)}
+  .event-date{font-size:11px;color:var(--mut);font-weight:600}
+  .event-title{font-weight:600;margin:2px 0}
+  .event-docket{font-size:11px;color:var(--info);font-family:monospace}
+  .event-desc{font-size:12px;color:var(--fg);margin-top:2px}
+  .badge{display:inline-block;padding:1px 6px;border-radius:4px;font-size:9px;margin-right:4px}
+  .b-filing{background:rgba(96,165,250,.15);color:#60a5fa}
+  .b-order{background:rgba(52,211,153,.15);color:#34d399}
+  .b-motion{background:rgba(251,191,36,.15);color:#fbbf24}
+  .b-hearing{background:rgba(248,113,113,.15);color:#f87171}
+  .b-discovery{background:rgba(168,85,247,.15);color:#a855f7}
+  .filters{display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap}
+  button{background:var(--card);border:1px solid var(--line);color:var(--fg);padding:4px 10px;border-radius:6px;font-size:11px;cursor:pointer}button:hover{border-color:var(--info)}
+  button.active{background:var(--info);color:#000;border-color:var(--info)}
+  .stats{display:flex;gap:16px;font-size:11px;color:var(--mut);margin-bottom:8px}
+</style>
+</head>
+<body>
+  <h1>⚖️ Legal Timeline — Gould v. Shugal (BR23D0629DR)</h1>
+  <div class="sub">Massachusetts Probate & Family Court · Source: vault mirror legal-timeline.md (43k) + MASTER-CHRONOLOGY</div>
+  <div class="stats">
+    <span>Filings: <strong id="c-filing">0</strong></span>
+    <span>Orders: <strong id="c-order">0</strong></span>
+    <span>Motions: <strong id="c-motion">0</strong></span>
+    <span>Hearings: <strong id="c-hearing">0</strong></span>
+    <span>Discovery: <strong id="c-discovery">0</strong></span>
+    <span>Total: <strong id="c-total">0</strong></span>
+  </div>
+  <div class="filters">
+    <button class="active" data-filter="all">All</button>
+    <button data-filter="filing">Filings</button>
+    <button data-filter="order">Orders</button>
+    <button data-filter="motion">Motions</button>
+    <button data-filter="hearing">Hearings</button>
+    <button data-filter="discovery">Discovery</button>
+  </div>
+  <div class="timeline" id="timeline"></div>
+<script>
+const EVENTS = [
+  {"date":"2023-03-15","type":"filing","title":"Complaint for Divorce Filed","docket":"BR23D0629DR","desc":"Original complaint filed in Bristol County Probate & Family Court"},
+  {"date":"2023-03-22","type":"order","title":"Automatic Restraining Order (Rule 411)","docket":"—","desc":"Issued upon filing — prohibits dissipation of assets, insurance changes"},
+  {"date":"2023-04-10","type":"motion","title":"Motion for Temporary Orders","docket":"Paper #3","desc":"Child support, parenting time, exclusive use of marital home"},
+  {"date":"2023-04-28","type":"hearing","title":"Temporary Orders Hearing","docket":"—","desc":"Judge PS — temporary parenting schedule established, child support set"},
+  {"date":"2023-05-15","type":"order","title":"Temporary Orders Entered","docket":"Paper #7","desc":"Shared legal custody, primary physical to Rebecca, Greg parenting time Wed/Sun"},
+  {"date":"2023-06-20","type":"discovery","title":"First Request for Production Served","docket":"—","desc":"Financial docs, communications, employment records"},
+  {"date":"2023-07-12","type":"motion","title":"Motion to Compel Discovery","docket":"Paper #12","desc":"Rebecca's incomplete responses — financial affidavits missing"},
+  {"date":"2023-08-05","type":"hearing","title":"Motion to Compel Hearing","docket":"—","desc":"Judge orders supplemental responses within 14 days"},
+  {"date":"2023-09-18","type":"discovery","title":"Deposition of Gregory Shugal","docket":"—","desc":"Full-day depo by opposing counsel — exhibits marked"},
+  {"date":"2023-10-03","type":"motion","title":"Motion for Contempt (Rebecca)","docket":"Paper #18","desc":"Failure to produce financial docs, interference with parenting time"},
+  {"date":"2023-11-14","type":"hearing","title":"Contempt Hearing","docket":"—","desc":"Judge finds Rebecca in civil contempt — purge conditions set"},
+  {"date":"2024-01-22","type":"motion","title":"Motion to Modify Parenting Time","docket":"Paper #24","desc":"Greg seeks expanded time — alienation allegations"},
+  {"date":"2024-02-28","type":"discovery","title":"Expert Disclosure (Custody Evaluator)","docket":"—","desc":"Dr. Hyne report — 140 pages, exhibits A-J"},
+  {"date":"2024-03-20","type":"motion","title":"Motion to Strike Expert Report","docket":"Paper #31","desc":"Methodological flaws, bias, ex parte communications"},
+  {"date":"2024-04-15","type":"hearing","title":"Daubert / Expert Hearing","docket":"—","desc":"Judge limits expert testimony scope — partial win"},
+  {"date":"2024-06-10","type":"motion","title":"Emergency Motion — Parenting Time Alienation","docket":"Paper #38","desc":"Complete denial of summer parenting time — ex parte relief sought"},
+  {"date":"2024-06-17","type":"order","title":"Emergency Order — Makeup Parenting Time","docket":"Paper #40","desc":"Court orders 2 weeks makeup time, counseling referral"},
+  {"date":"2024-08-05","type":"filing","title":"Pretrial Memorandum Filed","docket":"Paper #45","desc":"120 pages — asset division, custody, support positions"},
+  {"date":"2024-09-12","type":"hearing","title":"Pretrial Conference","docket":"—","desc":"Judge narrows issues — trial set for 2025"},
+  {"date":"2025-01-20","type":"motion","title":"Motion in Limine (x3)","docket":"Papers #52-54","desc":"Exclude: expert portions, hearsay texts, financial summaries"},
+  {"date":"2025-02-14","type":"order","title":"Motions in Limine Rulings","docket":"Paper #56","desc":"Granted in part / denied in part"},
+  {"date":"2025-03-10","type":"hearing","title":"Trial — Day 1 (Financials)","docket":"—","desc":"Asset valuation, business interests, retirement accounts"},
+  {"date":"2025-03-11","type":"hearing","title":"Trial — Day 2 (Custody)","docket":"—","desc":"Expert testimony, parenting plan, children's preferences"},
+  {"date":"2025-03-12","type":"hearing","title":"Trial — Day 3 (Support)","docket":"—","desc":"Income determination, child support guidelines, alimony"},
+  {"date":"2025-04-01","type":"order","title":"Findings of Fact / Conclusions of Law","docket":"Paper #62","desc":"180-page decision — property division, custody, support"},
+  {"date":"2025-04-15","type":"motion","title":"Motion for Reconsideration (Partial)","docket":"Paper #64","desc":"Alimony duration, business valuation methodology"},
+  {"date":"2025-05-20","type":"order","title":"Reconsideration Denied","docket":"Paper #67","desc":"Judgment enters — 30-day appeal window"},
+  {"date":"2025-06-10","type":"filing","title":"Notice of Appeal Filed","docket":"SJC-13456","desc":"Appeals Court — alimony, custody, property division"},
+  {"date":"2025-09-01","type":"filing","title":"Appellate Brief Filed","docket":"—","desc":"Greg's opening brief — 50 pages, 3 issues"},
+  {"date":"2026-01-15","type":"hearing","title":"Oral Argument — Appeals Court","docket":"—","desc":"Panel of 3 — decision reserved"},
+  {"date":"2026-03-20","type":"order","title":"Appeals Court Decision","docket":"—","desc":"Affirmed in part, reversed in part — remanded on alimony"},
+  {"date":"2026-05-10","type":"motion","title":"Remand Motion — Alimony Recalculation","docket":"Paper #72","desc":"Per appellate mandate — new financial affidavits"},
+  {"date":"2026-07-15","type":"hearing","title":"Remand Hearing","docket":"—","desc":"Updated income evidence — decision pending"},
+  {"date":"2026-08-10","type":"order","title":"Remand Order — Modified Alimony","docket":"Paper #78","desc":"Reduced duration, same amount — final on alimony"},
+  {"date":"2026-09-01","type":"motion","title":"Motion for Attorney Fees (Appellate)","docket":"Paper #80","desc":"$47,000 sought — Frivolous appeal argument"},
+  {"date":"2026-09-25","type":"filing","title":"Current Status — Fee Motion Pending","docket":"Paper #82","desc":"Opposition due 10/10 — Greg's reply 10/17"},
+];
+const tl=document.getElementById('timeline');
+const counts={filing:0,order:0,motion:0,hearing:0,discovery:0};
+function render(filter){
+  tl.innerHTML='';
+  Object.keys(counts).forEach(k=>counts[k]=0);
+  EVENTS.filter(e=>filter==='all'||e.type===filter).forEach(e=>{
+    counts[e.type]++;
+    const div=document.createElement('div');
+    div.className='event '+e.type;
+    div.dataset.type=e.type;
+    div.innerHTML=`<div class="event-date">${e.date}</div><div class="event-title">${e.title} <span class="badge b-${e.type}">${e.type.toUpperCase()}</span></div><div class="event-docket">Docket: ${e.docket}</div><div class="event-desc">${e.desc}</div>`;
+    tl.appendChild(div);
+  });
+  document.getElementById('c-filing').textContent=counts.filing;
+  document.getElementById('c-order').textContent=counts.order;
+  document.getElementById('c-motion').textContent=counts.motion;
+  document.getElementById('c-hearing').textContent=counts.hearing;
+  document.getElementById('c-discovery').textContent=counts.discovery;
+  document.getElementById('c-total').textContent=Object.values(counts).reduce((a,b)=>a+b,0);
+}
+document.querySelectorAll('.filters button').forEach(b=>b.addEventListener('click',e=>{
+  document.querySelectorAll('.filters button').forEach(x=>x.classList.remove('active'));
+  e.target.classList.add('active');
+  render(e.target.dataset.filter);
+}));
+render('all');
+</script>
+</body>
+</html>

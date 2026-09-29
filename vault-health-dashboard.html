@@ -1,0 +1,104 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<style>
+  :root{--card:#1c1c1e;--line:rgba(255,255,255,.09);--ok:#34d399;--warn:#fbbf24;--bad:#f87171;--info:#60a5fa;--mut:var(--muted-foreground);--fg:var(--foreground);}
+  *{box-sizing:border-box}body{font:13px/1.45 -apple-system,'Segoe UI',Roboto,sans-serif;color:var(--fg);background:transparent;padding:2px;margin:0}
+  h1{font-size:16px;margin:0 0 2px}.sub{color:var(--mut);margin-bottom:12px;font-size:11px}
+  .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:10px}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:12px}
+  .card h2{font-size:12px;text-transform:uppercase;letter-spacing:.06em;color:var(--mut);margin:0 0 8px}
+  .row{display:flex;justify-content:space-between;padding:4px 0;border-bottom:1px dashed var(--line);font-size:12px}
+  .row:last-child{border-bottom:none}
+  .trend{display:inline-block;width:100px;height:30px;margin-left:8px;vertical-align:middle}
+  .alert{color:var(--bad);font-weight:600}
+  .healthy{color:var(--ok)}
+  .charts{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px}
+  .mini{height:120px;background:rgba(0,0,0,.2);border-radius:6px;position:relative}
+  canvas{width:100%;height:100%}
+</style>
+</head>
+<body>
+  <h1>📊 Vault Health — 2nd Brain</h1>
+  <div class="sub">Source: vault mirror ~/fleet/vault-mirror · Dated snapshots from 📊 DASHBOARDS/vault-health-*.md</div>
+  <div class="grid">
+    <div class="card">
+      <h2>Snapshot History</h2>
+      <div class="row"><span>2026-07-04</span><span class="healthy">322 files</span></div>
+      <div class="row"><span>2026-07-07</span><span class="healthy">322 files</span></div>
+      <div class="row"><span>2026-07-08</span><span class="healthy">322 files</span></div>
+      <div class="row"><span>2026-07-17</span><span class="healthy">322 files</span></div>
+      <div class="row"><span>2026-08-06</span><span class="healthy">322 files</span></div>
+      <div class="row"><span>2026-08-25</span><span class="healthy">328 files</span></div>
+      <div class="row"><span><strong>Trend</strong></span><span class="healthy">+6 files (42 days)</strong></div>
+    </div>
+
+    <div class="card">
+      <h2>Current State (Mirror)</h2>
+      <div class="row"><span>Total Files</span><span id="total-files">~73k</span></div>
+      <div class="row"><span>Markdown Notes</span><span id="md-files">4,444</span></div>
+      <div class="row"><span>KNOWLEDGE Curated</span><span id="knowledge">48,334</span></div>
+      <div class="row"><span>INBOX Backlog</span><span class="warn" id="inbox">630</span></div>
+      <div class="row"><span>SOURCES (by machine)</span><span>19,440</span></div>
+      <div class="row"><span>Archive</span><span>2,088</span></div>
+      <div class="row"><span>Last Mirror Sync</span><span id="mirror-age">4h ago</span></div>
+      <div class="row"><span>Canonical Vault</span><span class="alert">DISMOUNTED</span></div>
+    </div>
+
+    <div class="card">
+      <h2>Health Checks</h2>
+      <div class="row"><span>Vault Mount</span><span class="alert">FAIL</span></div>
+      <div class="row"><span>Mirror Sync (30min cron)</span><span class="healthy">OK</span></div>
+      <div class="row"><span>Git Tracking (mirror)</span><span class="healthy">OK</span></div>
+      <div class="row"><span>CONNECTIONS MOCs</span><span class="healthy">4 files</span></div>
+      <div class="row"><span>DASHBOARDS Renderable</span><span class="warn">18 → 5 built</span></div>
+      <div class="row"><span>Legal Dedup Manifest</span><span class="healthy">Present</span></div>
+      <div class="row"><span>Project Index</span><span class="healthy">17.4k chars</span></div>
+      <div class="row"><span>Legal Timeline</span><span class="healthy">43k chars</span></div>
+    </div>
+
+    <div class="card">
+      <h2>Section Breakdown</h2>
+      <div class="row"><span>🧠 KNOWLEDGE</span><span>48,334 files</span></div>
+      <div class="row"><span>📂 SOURCES</span><span>19,440 files</span></div>
+      <div class="row"><span>Archive</span><span>2,088 files</span></div>
+      <div class="row"><span>📥 INBOX</span><span class="warn">630 files</span></div>
+      <div class="row"><span>🤖 AGENTS</span><span>70 files</span></div>
+      <div class="row"><span>⚙️ SYSTEM</span><span>71 files</span></div>
+      <div class="row"><span>Apple Notes</span><span>224 files</span></div>
+      <div class="row"><span>🔗 CONNECTIONS</span><span>2 files (mirror)</span></div>
+      <div class="row"><span>📊 DASHBOARDS</span><span>18 files (canonical)</span></div>
+      <div class="row"><span>🎙️ VOICE</span><span>5 files</span></div>
+    </div>
+
+    <div class="card">
+      <h2>Alerts & Actions</h2>
+      <div class="row"><span class="alert">●</span><span>Canonical vault dismounted — Delta investigating</span></div>
+      <div class="row"><span class="warn">●</span><span>INBOX 630 files — needs triage to KNOWLEDGE</span></div>
+      <div class="row"><span class="warn">●</span><span>Legal dual taxonomy — consolidation planned</span></div>
+      <div class="row"><span class="warn">●</span><span>Phase 1 ingestion 5/7 pending</span></div>
+      <div class="row"><span class="healthy">●</span><span>Mirror healthy — 30min cron active</span></div>
+      <div class="row"><span class="healthy">●</span><span>Git history — audit trail preserved</span></div>
+    </div>
+
+    <div class="card">
+      <h2>Phase 1 Ingestion Status</h2>
+      <div class="row"><span>Apple Notes (239/591)</span><span class="healthy">✓ DONE</span></div>
+      <div class="row"><span>Ubuntu Markdown (6,584)</span><span class="warn">⏳ PENDING</span></div>
+      <div class="row"><span>Agent Instructions (89)</span><span class="warn">⏳ PENDING</span></div>
+      <div class="row"><span>Hermes/Openclaw Projects</span><span class="warn">⏳ PENDING</span></div>
+      <div class="row"><span>.hermes Config</span><span class="warn">⏳ PENDING</span></div>
+      <div class="row"><span>GDrive Legal Docs</span><span class="warn">⏳ PENDING</span></div>
+      <div class="row"><span>iPhone Backup (iMazing)</span><span class="warn">⏳ PENDING</span></div>
+    </div>
+  </div>
+  <script>
+    // Update mirror age
+    const mirrorMtime = new Date('2026-09-28T20:25:00');
+    const now = new Date();
+    const diffH = Math.floor((now - mirrorMtime) / 3.6e6);
+    document.getElementById('mirror-age').textContent = `${diffH}h ago`;
+  </script>
+</body>
+</html>
